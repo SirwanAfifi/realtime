@@ -20,6 +20,8 @@ const stream = require("./routes/stream");
 
 const app = express();
 
+app.use(express.json());
+
 app.use("/stream", stream);
 
 app.use(cors());
