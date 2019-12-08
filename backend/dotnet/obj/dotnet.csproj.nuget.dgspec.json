@@ -1,0 +1,64 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/sirwan/Desktop/propjTemp/realtime/backend/dotnet/dotnet.csproj": {}
+  },
+  "projects": {
+    "/Users/sirwan/Desktop/propjTemp/realtime/backend/dotnet/dotnet.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/sirwan/Desktop/propjTemp/realtime/backend/dotnet/dotnet.csproj",
+        "projectName": "dotnet",
+        "projectPath": "/Users/sirwan/Desktop/propjTemp/realtime/backend/dotnet/dotnet.csproj",
+        "packagesPath": "/Users/sirwan/.nuget/packages/",
+        "outputPath": "/Users/sirwan/Desktop/propjTemp/realtime/backend/dotnet/obj/",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "/Users/sirwan/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.0": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.0": {
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
