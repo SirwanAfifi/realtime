@@ -3,10 +3,13 @@ const router = express.Router();
 
 const Stream = require("../models/Stream");
 
-router.post("/add", (req, res, next) => {
-  const stream = Stream.create(req.body);
+router.post("/add", async (req, res, next) => {
+  const stream = await Stream.create(req.body);
 
   res.status(200).json(stream);
+
+  return sendToAll(stream);
+
 });
 
 let clients = [];
@@ -21,7 +24,8 @@ router.get("/", async (req, res, next) => {
 
   // Send data
   const streams = await Stream.find();
-  const data = `data: ${JSON.stringify(streams)}\n\n`;
+  let json = streams.map((p) => p.toJSON());
+  const data = `data: ${JSON.stringify(json)}\n\n`;
   res.write(data);
 
   const clientId = Date.now();
@@ -38,5 +42,9 @@ router.get("/", async (req, res, next) => {
     clients = clients.filter(c => c.id !== clientId);
   });
 });
+
+function sendToAll(stream) {
+  clients.forEach(c => c.res.write(`data: ${JSON.stringify(stream)}\n\n`))
+}
 
 module.exports = router;
