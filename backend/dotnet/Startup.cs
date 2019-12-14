@@ -17,7 +17,6 @@ namespace dotnet
     public class Startup
     {
         private List<Data> _data = new List<Data>();
-        private List<Client> _clients = new List<Client>();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -46,32 +45,17 @@ namespace dotnet
             {
                 endpoints.MapGet("/stream", async context =>
                 {
-                    var cancellationToken = context.RequestAborted;
-
-                    context.Response.Headers.Add("Content-Type", "text/event-stream");
-                    context.Response.Headers.Add("Connection", "keep-alive");
-                    context.Response.Headers.Add("Cache-Control", "no-cache");
-
-                    var data = $"data: {JsonSerializer.Serialize(_data)}\n\n";
-
-                    await context.Response.BodyWriter.WriteAsync(Encoding.UTF8.GetBytes(data));
-
-                    var clientId = DateTime.Now.Millisecond;
-                    var newClient = new Client
-                    {
-                        Id = clientId,
-                        Res = context.Response
-                    };
-                    _clients.Add(newClient);
+                    var response = context.Response;
+                    response.Headers.Add("Content-Type", "text/event-stream");
 
                     while (true)
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            _clients = _clients.Where(c => c.Id != clientId).ToList();
-                            loggerDebug.LogWarning($"{clientId} Connection closed");
-                            break;
-                        }
+                        // WriteAsync requires `using Microsoft.AspNetCore.Http`
+                        await response.Body
+                            .WriteAsync(Encoding.UTF8.GetBytes($"data: {JsonSerializer.Serialize(_data)}\n\n"));
+
+                        await response.Body.FlushAsync();
+                        await Task.Delay(5 * 1000);
                     }
 
                 });
@@ -84,13 +68,6 @@ namespace dotnet
                         var data = await reader.ReadToEndAsync();
                         var entry = JsonSerializer.Deserialize<Data>(data);
                         _data.Add(entry);
-
-                        // Notify
-                        foreach (var client in _clients)
-                        {
-                            var toSent = $"data: {JsonSerializer.Serialize(_data)}\n\n";
-                            await client.Res.BodyWriter.WriteAsync(Encoding.UTF8.GetBytes(toSent));
-                        }
                     }
 
                 });
@@ -102,11 +79,5 @@ namespace dotnet
     {
         public string Name { get; set; }
         public string Description { get; set; }
-    }
-
-    public class Client
-    {
-        public int Id { get; set; }
-        public Microsoft.AspNetCore.Http.HttpResponse Res { get; set; }
     }
 }
