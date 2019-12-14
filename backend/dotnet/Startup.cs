@@ -16,7 +16,6 @@ namespace dotnet
 {
     public class Startup
     {
-        private List<Data> _data = new List<Data>();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -46,13 +45,15 @@ namespace dotnet
                 endpoints.MapGet("/stream", async context =>
                 {
                     var response = context.Response;
-                    response.Headers.Add("Content-Type", "text/event-stream");
+                    response.Headers.Add("connection", "keep-alive");
+                    response.Headers.Add("cach-control", "no-cache");
+                    response.Headers.Add("content-type", "text/event-stream");
 
                     while (true)
                     {
                         // WriteAsync requires `using Microsoft.AspNetCore.Http`
                         await response.Body
-                            .WriteAsync(Encoding.UTF8.GetBytes($"data: {JsonSerializer.Serialize(_data)}\n\n"));
+                            .WriteAsync(Encoding.UTF8.GetBytes($"data: {JsonSerializer.Serialize(Datasource.GetData())}\n\n"));
 
                         await response.Body.FlushAsync();
                         await Task.Delay(5 * 1000);
@@ -66,18 +67,12 @@ namespace dotnet
                     {
                         // Add to Data
                         var data = await reader.ReadToEndAsync();
-                        var entry = JsonSerializer.Deserialize<Data>(data);
-                        _data.Add(entry);
+                        // var entry = JsonSerializer.Deserialize<Data>(data);
+                        // _data.Add(entry);
                     }
 
                 });
             });
         }
-    }
-
-    public class Data
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
     }
 }
