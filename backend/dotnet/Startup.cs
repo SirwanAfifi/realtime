@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 
@@ -26,6 +27,9 @@ namespace dotnet
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<Datasource, Datasource>();
+            services.TryAddSingleton<IRandomNumberProvider, RandomNumberProvider>();
+
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
                 {
                     builder.AllowAnyOrigin()
@@ -35,7 +39,8 @@ namespace dotnet
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> loggerDebug)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
+        ILogger<Startup> loggerDebug, Datasource datasource)
         {
             app.UseCors("MyPolicy");
 
@@ -53,10 +58,10 @@ namespace dotnet
                     {
                         // WriteAsync requires `using Microsoft.AspNetCore.Http`
                         await response.Body
-                            .WriteAsync(Encoding.UTF8.GetBytes($"data: {JsonSerializer.Serialize(Datasource.GetData())}\n\n"));
+                            .WriteAsync(Encoding.UTF8.GetBytes($"data: {JsonSerializer.Serialize(datasource.GetData())}\n\n"));
 
                         await response.Body.FlushAsync();
-                        await Task.Delay(5 * 1000);
+                        await Task.Delay(2 * 1000);
                     }
 
                 });
