@@ -9,7 +9,7 @@ const ProductList = () => {
         currency: 'gbp',
     });
 
-    let eventSource = new EventSource("http://localhost:5000/stream");
+    let eventSource = new EventSource("http://localhost:8000/stream");
     React.useEffect(() => {
         eventSource.onmessage = e => updateProdutList(JSON.parse(e.data));
     }, []);

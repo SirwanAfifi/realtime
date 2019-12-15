@@ -17,12 +17,31 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const stream = require("./routes/stream");
+const getData = require("./services/datasource");
 
 const app = express();
 
 app.use(express.json());
 
-app.use("/stream", stream);
+// app.use("/stream", stream);
+app.get("/stream", (req, res) => {
+
+  res.set({
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+
+    // enabling CORS
+    'Access-Control-Allow-Origin': "*",
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+  });
+
+  setInterval(() => {
+    res.write(`event: message\n`);
+    res.write(`data: ${JSON.stringify(getData())}\n\n`);
+  }, 2000)
+
+});
 
 app.use(cors());
 app.use(bodyParser.json());
