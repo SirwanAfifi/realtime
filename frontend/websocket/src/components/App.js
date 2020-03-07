@@ -1,6 +1,6 @@
 import React from "react";
-import Chat from "./Chat";
+import ChatSignalR from "./Chat-SignalR";
 
 export default () => {
-  return <Chat />;
+  return <ChatSignalR />;
 };

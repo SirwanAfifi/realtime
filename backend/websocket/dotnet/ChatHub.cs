@@ -5,9 +5,15 @@ namespace websocket
 {
     public class ChatHub : Hub
     {
-        public async Task Message(string user, string message)
+        public async Task Message(MessageModel message)
         {
-            await Clients.All.SendAsync("message", user, message);
+            await Clients.Others.SendAsync("message", message);
         }
+    }
+
+    public class MessageModel
+    {
+        public string UserName { get; set; }
+        public string Message { get; set; }
     }
 }
