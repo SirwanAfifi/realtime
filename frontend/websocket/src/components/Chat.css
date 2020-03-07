@@ -1,0 +1,11 @@
+.wrapper {
+  position: absolute;
+  width: 300px;
+  height: 400px;
+  right: 10px;
+  bottom: 10px;
+}
+
+.card {
+  height: 100%;
+}
