@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Chat.css";
-import ChatItem from "./ChatItem";
+import Message from "./Message";
 import {
   HubConnectionBuilder,
   LogLevel,
@@ -52,7 +52,7 @@ export default () => {
         </h5>
         <div className="card-body overflow-auto">
           {messages.map((msg, index) => (
-            <ChatItem
+            <Message
               key={index}
               userName={msg.userName}
               message={msg.message}
