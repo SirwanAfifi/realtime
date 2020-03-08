@@ -11,27 +11,18 @@ export default () => {
   const [userName, setUserName] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [hubConnection, setHubConnection] = useState();
+  const [connection, setConnection] = useState();
 
-  const createHubConnection = async () => {
-    const hubConnect = new HubConnectionBuilder()
+  useEffect(async () => {
+    const socketConnection = new HubConnectionBuilder()
       .configureLogging(LogLevel.Debug)
       .withUrl("http://localhost:5000/chatHub", {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets
       })
       .build();
-    try {
-      await hubConnect.start();
-      console.log("Connection successful!");
-    } catch (err) {
-      alert(err);
-    }
-    setHubConnection(hubConnect);
-  };
-
-  useEffect(() => {
-    createHubConnection();
+    await socketConnection.start();
+    setConnection(socketConnection);
 
     const uName = prompt("Name?");
     if (uName) {
@@ -39,8 +30,8 @@ export default () => {
     }
   }, []);
 
-  hubConnection &&
-    hubConnection.on("message", message => {
+  connection &&
+    connection.on("message", message => {
       setMessages([...messages, message]);
     });
 
@@ -81,7 +72,7 @@ export default () => {
                 setMessages([...messages, msg]);
                 setMessage("");
 
-                hubConnection && hubConnection.invoke("message", msg);
+                connection && connection.invoke("message", msg);
               }}
             >
               Send
