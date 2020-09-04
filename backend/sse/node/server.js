@@ -8,9 +8,9 @@ mongoose
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
-  .then(con => console.log("DB connection successful!"));
+  .then((con) => console.log("DB connection successful!"));
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -25,22 +25,26 @@ app.use(express.json());
 
 // app.use("/stream", stream);
 app.get("/stream", (req, res) => {
-
   res.set({
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache",
     Connection: "keep-alive",
 
     // enabling CORS
-    'Access-Control-Allow-Origin': "*",
-    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept",
   });
 
-  setInterval(() => {
+  let eventInterval = setInterval(() => {
     res.write(`event: message\n`);
     res.write(`data: ${JSON.stringify(getData())}\n\n`);
-  }, 2000)
+  }, 2000);
 
+  req.on("close", (err) => {
+    clearInterval(eventInterval);
+    res.end();
+  });
 });
 
 app.use(cors());
